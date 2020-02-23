@@ -1,0 +1,127 @@
+version: '3'
+services:
+  firebase-checker:
+    container_name: firebase-checker
+    image: firebase-checker:1.0.0
+    environment: 
+      kafka_server: kafka
+      kafka_port: 9093
+    depends_on:
+      - database-service
+
+  database-service:
+    container_name: database-service
+    image: database-service:1.0.0
+    environment: 
+      database_url: postgresql
+      database_port: 5432
+      database_user: aditya
+      database_password: password
+      database_name: shazam
+      database_schema: public
+
+      kafka_server: kafka
+      kafka_port: 9093
+    ports:
+      - 8888:8080
+    expose:
+      - 8080
+    depends_on:
+      - postgresql
+
+  shazam-facade:
+    container_name: shazam-facade
+    image: shazam-facade:1.0.0
+    ports:
+      - 1111:5005
+    environment: 
+      kafka_server: kafka
+      kafka_port: 9093
+    depends_on:
+      - database-service
+
+  poller:
+    container_name: poller
+    image: poller:1.0.0
+    ports:
+      - 2222:5005
+    environment: 
+      kafka_server: kafka
+      kafka_port: 9093
+    depends_on:
+      - database-service
+
+  linker:
+    container_name: linker
+    image: linker:1.0.0
+    environment: 
+      kafka_server: kafka
+      kafka_port: 9093
+      myfreemp3_regex: window\.open\('(?<myLink>.*)',.*\);
+    depends_on:
+      - database-service
+  
+  push:
+    container_name: push
+    image: push:1.0.0
+    environment: 
+      kafka_server: kafka
+      kafka_port: 9093
+    depends_on:
+      - database-service
+
+  postgresql:
+    container_name: postgresql
+    image: postgres
+    environment:
+      POSTGRES_DB: shazam
+      POSTGRES_USER: aditya
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5432:5432
+    volumes:
+      - /Users/Aditya/personal_intellij/shazamdb/data:/var/lib/postgresql/data
+    depends_on:
+      - kafka
+  
+  zookeeper:
+    container_name: zookeeper
+    image: wurstmeister/zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+    - "2181:2181"
+  
+  kafka:
+    container_name: kafka
+    image: wurstmeister/kafka:2.12-2.2.1
+    ports:
+     - "9092:9092"
+    expose:
+     - "9093"
+    
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: >- 
+        LISTENER_DOCKER_INTERNAL://kafka:9093, 
+        LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-localhost}:9092
+
+      KAFKA_LISTENERS: >-
+        LISTENER_DOCKER_INTERNAL://:9093,
+        LISTENER_DOCKER_EXTERNAL://:9092
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: >- 
+        LISTENER_DOCKER_INTERNAL:PLAINTEXT,
+        LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG4J_LOGGERS: >- 
+        kafka.controller=INFO,
+        kafka.producer.async.DefaultEventHandler=INFO,
+        state.change.logger=INFO
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - zookeeper

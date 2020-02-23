@@ -1,0 +1,1 @@
+docker-compose up -d shazam-facade poller linker push

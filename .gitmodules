@@ -1,0 +1,36 @@
+[submodule "poller"]
+	path = poller
+	url = /Users/Aditya/personal_intellij/poller
+[submodule "linker"]
+	path = linker
+	url = /Users/Aditya/personal_intellij/linker
+[submodule "push"]
+	path = push
+	url = /Users/Aditya/personal_intellij/push
+[submodule "shazamfacade"]
+	path = shazamfacade
+	url = /Users/Aditya/personal_intellij/shazamfacade
+[submodule "firebase-checker"]
+	path = firebase-checker
+	url = /Users/Aditya/personal_intellij/firebase-checker
+[submodule "db_service"]
+	path = db_service
+	url = /Users/Aditya/personal_intellij/db_service
+[submodule "shazam-syncer-db-service"]
+	path = shazam-syncer-db-service
+	url = https://github.com/adityamhatre/shazam-syncer-db-service
+[submodule "shazam-syncer-poller-service"]
+	path = shazam-syncer-poller-service
+	url = https://github.com/adityamhatre/shazam-syncer-poller-service
+[submodule "shazam-syncer-linker-service"]
+	path = shazam-syncer-linker-service
+	url = https://github.com/adityamhatre/shazam-syncer-linker-service
+[submodule "shazam-syncer-facade-service"]
+	path = shazam-syncer-facade-service
+	url = https://github.com/adityamhatre/shazam-syncer-facade-service
+[submodule "shazam-syncer-firebase-service"]
+	path = shazam-syncer-firebase-service
+	url = https://github.com/adityamhatre/shazam-syncer-firebase-service
+[submodule "shazam-syncer-push-service"]
+	path = shazam-syncer-push-service
+	url = https://github.com/adityamhatre/shazam-syncer-push-service
